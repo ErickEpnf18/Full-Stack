@@ -1,5 +1,5 @@
+```mermaid
 sequenceDiagram
-
     participant user
     participant browser
     participant server
@@ -54,3 +54,4 @@ end
     deactivate server
 
     browser-->>user: Show all data to user
+```
