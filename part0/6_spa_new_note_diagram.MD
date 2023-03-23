@@ -18,7 +18,7 @@ sequenceDiagram
     loop spa.js
     browser->>browser: add a note
     end
-    browser-->>user: Show all data to user
+    browser-->>user: Show new note
     server-->>browser: HTML document with status 201 cretead
     deactivate server
 
