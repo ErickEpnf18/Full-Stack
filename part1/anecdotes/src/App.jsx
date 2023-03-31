@@ -1,9 +1,17 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import "./App.css";
 
 const Button = ({ text, setEventHandler }) => (
   <button onClick={setEventHandler}>{text}</button>
+);
+
+const Anecdotes = ({ text, anecdotes, votes }) => (
+  <div>
+    <h1>{text}</h1>
+    {anecdotes}
+    <p>has {votes} votes</p>
+  </div>
 );
 
 function App() {
@@ -31,19 +39,37 @@ function App() {
   };
 
   const voteAnecdote = () => {
-    const copy = [...votes]
+    const copy = [...votes];
     copy[selected] += 1;
-    console.log(votes)
-  }
+    setVotes(copy);
+    console.log(copy, selected);
+  };
+
+  const indexOfMaxValue = () => {
+    const max = Math.max(...votes);
+    if(max === 0) return -1
+    return votes.findIndex((anec) => anec === max);
+  };
 
   return (
     <div className="App">
-      {anecdotes[selected]}
+      <Anecdotes
+        anecdotes={anecdotes[selected]}
+        votes={votes[selected]}
+        text="Anecdote of the day"
+      />
+      <div>
+        <Button setEventHandler={voteAnecdote} text="vote" />
+        <Button setEventHandler={selectAnecdote} text="next anecdote" />
+      </div>
 
-            <Button setEventHandler={voteAnecdote} text="vote" />
-      <Button setEventHandler={selectAnecdote} text="next anecdote" />
+      <Anecdotes
+        anecdotes={anecdotes[indexOfMaxValue()]}
+        votes={votes[indexOfMaxValue()]}
+        text="Anecdote with most votes"
+      />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
