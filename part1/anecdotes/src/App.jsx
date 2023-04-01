@@ -34,7 +34,7 @@ function App() {
     while (selected === number_random) {
       number_random = random();
     }
-    // console.log(number_random);
+    console.log(number_random);
     setSelected(number_random);
   };
 
