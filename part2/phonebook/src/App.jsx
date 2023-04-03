@@ -1,55 +1,31 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 
-const Filter = ({ handleSearch, search }) => (
-  <div>
-    filter shown with:
-    <input name="name" onChange={handleSearch} value={search} />
-  </div>
-);
+import "./App.css";
+import PersonForm from "./components/PersonForm";
+import Notification from "./components/Notification";
+import Filter from "./components/Filter";
+import Persons from "./components/Persons";
 
-const PersonForm = ({ submit, handleChange, newName }) => (
-  <form onSubmit={submit}>
-    <div>
-      name:
-      <input name="name" onChange={handleChange} value={newName.name} />
-    </div>
-    <div>
-      number:
-      <input name="number" onChange={handleChange} value={newName.number} />
-    </div>
-    <div>
-      <button type="submit">add</button>
-    </div>
-  </form>
-);
 
-const Persons = ({ persons }) => {
-  return (
-    <div>
-      {persons.length === 0 ? (
-        <p>No persons</p>
-      ) : (
-        persons.map((person) => (
-          <p key={person.id}>
-            {person.name} {person.number}
-          </p>
-        ))
-      )}
-    </div>
-  );
-};
+
+
+
+
+
+
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState({ name: "", number: "" });
   const [search, setSearch] = useState("");
   const [personsFilter, setPersonsFilter] = useState([]);
+  const [message, setMessage] = useState(null);
 
   const hook = () => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(({ data }) => setPersons(data));
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+    });
   };
 
   useEffect(hook, []);
@@ -57,24 +33,60 @@ const App = () => {
   const submit = (e) => {
     e.preventDefault();
     if (newName.name === "" || newName.number === "") {
-      alert(`field can't be empty to phonebook`);
+      alert(`name or number field can't be empty`);
       return;
     }
-    const verifiedName = persons.find(
-      (x) => x.name === newName.name || x.number === newName.number
-    );
+    const verifiedName = persons.find((x) => x.name === newName.name);
     if (verifiedName) {
-      alert(
-        `${newName.name} or ${newName.number} is already added to phonebook`
-      );
-      return;
+      if (
+        window.confirm(
+          `${newName.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const newPerson = {
+          name: newName.name,
+          number: newName.number,
+          // id: persons.length + 1, // server put auto id
+        };
+
+        //  http update request
+        personService
+          .update(verifiedName.id, newPerson)
+          .then((resPerson) =>
+            setPersons(
+              persons.map((p) => (p.id !== verifiedName.id ? p : resPerson))
+            )
+          )
+          .catch((error) => {
+            setMessage({
+              msg: `Person '${newName.name}' was already removed from server`,
+              hasError: true,
+            });
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+            setPersons(persons.filter((n) => n.id !== verifiedName.id));
+          });
+        return;
+      } else return;
     }
+
+    //  http post request
     const newPerson = {
       name: newName.name,
       number: newName.number,
-      id: persons.length + 1,
+      // id: persons.length + 1,
     };
-    setPersons(persons.concat(newPerson));
+    personService
+      .create(newPerson)
+      .then((resPerson) => setPersons(persons.concat(resPerson)))
+      .then((any) => {
+        setMessage({
+          msg: `Added ${newName.name}`,
+          hasError: false,
+        });
+        setTimeout(() => setMessage(null), 5000);
+      });
   };
 
   const handleChange = ({ target }) => {
@@ -89,9 +101,16 @@ const App = () => {
     setSearch(target.value);
   };
 
+  const handleDelete = async (id) => {
+    // http delete request
+    setPersons(persons.filter((n) => n.id !== id));
+    await personService.deletePerson(id);
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
 
       <Filter handleSearch={handleSearch} search={search} />
 
@@ -105,7 +124,10 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={search === "" ? persons : personsFilter} />
+      <Persons
+        persons={search === "" ? persons : personsFilter}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };
