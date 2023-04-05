@@ -1,0 +1,22 @@
+@url = http://localhost:3006/
+###
+GET {{url}}api/persons
+
+###
+GET {{url}}info
+
+###
+
+GET {{url}}person/3
+
+###
+DELETE {{url}}person/4
+
+###
+POST {{url}}api/persons
+Content-Type: application/json
+
+{
+    "name": "Segio Layos",
+    "number": "12384123-2389"
+}
