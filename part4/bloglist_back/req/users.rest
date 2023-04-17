@@ -1,0 +1,17 @@
+@url = http://localhost:3005
+###
+GET {{url}}/api/users
+
+###
+GET {{url}}/api/users/643b32d0d1e91c6dddec362c
+
+
+###
+POST {{url}}/api/users
+Content-Type: application/json
+
+{
+  "username": "dunedain",
+  "password": "dunedain",
+  "name": "Dunedain"
+}

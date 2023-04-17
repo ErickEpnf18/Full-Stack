@@ -1,0 +1,23 @@
+@url = http://localhost:3005
+###
+GET {{url}}/api/blogs
+
+###
+GET {{url}}/api/blogs/643c3da05cbeb62e4f1868dd
+
+
+###
+POST {{url}}/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRlamFuIiwiaWQiOiI2NDNiMzJkMGQxZTkxYzZkZGRlYzM2MmMiLCJpYXQiOjE2ODE2Njk0NzksImV4cCI6MTY4MTY3MzA3OX0.EKhWDYj4Rifxvre0590Ad-J_IsjRcEjnvjxfcTCRFs4
+
+{
+  "title": "CALISTENICS",
+  "author": "Gorilla GANG",
+  "url": "gorilla.gang.com",
+  "likes": 900000000
+}
+
+###
+DELETE {{url}}/api/blogs/643c479da81c4f8005846ba4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRlamFuIiwiaWQiOiI2NDNiMzJkMGQxZTkxYzZkZGRlYzM2MmMiLCJpYXQiOjE2ODE2Njg4NjIsImV4cCI6MTY4MTY3MjQ2Mn0.EwFsQk3KjTrHyEEG-nRBXg0pC61uOZETFCE4e-dWu-4
